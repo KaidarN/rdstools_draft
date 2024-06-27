@@ -15,6 +15,7 @@ Imports:
     RcppEigen,
     RcppNumerical,
     Rcpp
+RoxygenNote: 7.2.3
 Encoding: UTF-8
 LazyData: true
 
