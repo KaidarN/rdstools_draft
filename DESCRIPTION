@@ -7,14 +7,14 @@ Maintainer: The package maintainer <knurumov@umich.edu>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
-Imports: 
-survey,
-RcppArmadillo,
-RcppParallel,
-BH,
-RcppEigen,
-RcppNumerical,
-Rcpp
+Imports:
+    survey,
+    RcppArmadillo,
+    RcppParallel,
+    BH,
+    RcppEigen,
+    RcppNumerical,
+    Rcpp
 Encoding: UTF-8
 LazyData: true
 
