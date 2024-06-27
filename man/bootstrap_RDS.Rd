@@ -18,7 +18,6 @@ out = bootstrap_RDS(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
   \item{RECRUITER_ID}{character or numeric vector; A variable indicating recruiter ID}
   \item{data.cov}{vector, matrix or data frame; Variable(s) of interest that will be used in the analysis}
   \item{type}{character; One of the six types of bootstrap methods, please see the vignette for a more detailed information}
-}
   \item{n.times}{scalar; How many bootstrap resamples should be taken}
   \item{return_data}{logical; By default return_data=F returns respondent ID and bootstrap iterations. If return_data TRUE, then the output will include variable(s) specified in data.cov}
 }

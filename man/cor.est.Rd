@@ -16,7 +16,7 @@ out = cor.est(x, y, data)
   \item{y}{Numeric vector; a continuous variable y}
   \item{data}{Data frame; Contains data from bootstrap_RDS function with boot_n and variables of interest}
 }
-}
+
 \value{
 A numeric scalar value indicating correlation coefficient between x and y
 }
