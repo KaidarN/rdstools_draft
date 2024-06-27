@@ -1,1 +1,8 @@
 exportPattern("^[[:alpha:]]+")
+import(RcppArmadillo)
+import(RcppParallel)
+import(RcppEigen)
+import(BH)
+import(RcppNumerical)
+import(Rcpp)
+import(survey)
