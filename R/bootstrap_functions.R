@@ -35,6 +35,7 @@
 #' return_data = T)
 #'
 #' @export
+
 bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
                          data.cov, type, n.times, return_data=F){
 
@@ -305,11 +306,10 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
 
     results_bootstrap_RDS = lapply(results_bootstrap_RDS,  # returns ID variables
                                    function(df) {data.frame(RESPONDENT_ID = df$RESPONDENT_ID, boot_n = df$boot_n)})
-
+    results_bootstrap_RDS = do.call(rbind, results_bootstrap_RDS)
   }  else {
     results_bootstrap_RDS = do.call(rbind, results_bootstrap_RDS)
   }
 
   return(results_bootstrap_RDS)
 }
-
