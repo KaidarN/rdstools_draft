@@ -26,14 +26,17 @@
 #' \item{DEGREE_MODIFY}{Numeric data, indicates the `degree` data after imputation of zero values and missing values.}
 #'
 #' @examples
-#' rds_data <- RDSdata(data = example_data,unique_id = "ID",
+#' # for preprocessing use RDStoydata
+#'
+#' data('RDStoydata')
+#'
+#' rds_data <- RDSdata(data = RDStoydata,unique_id = "ID",
 #' redeemed_coupon = "CouponR",
 #' issued_coupon = c("Coupon1",
 #'                  "Coupon2",
 #'                  "Coupon3"),
 #'                degree = "Degree",
-#'                degree_miss = 'hotdeck',
-#'                degree_zero = 'mean',result = c('Age','Sex'))
+#'                result = c('Age','Sex'))
 #' @export
 
 RDSdata <- function(

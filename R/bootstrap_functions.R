@@ -16,7 +16,24 @@
 #' \item {boot_n}{character vector; A indicator variable for each bootstrap sample}
 #'
 #' @examples
-#' out = bootstrap_RDS(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID, data.cov, type, n.times, return_data=F)
+#' data('RDStoydata')
+#'
+#' # Preprocess data with RDSdata function
+#' rds_data <- RDSdata(data = RDStoydata,unique_id = "ID",
+#' redeemed_coupon = "CouponR",
+#' issued_coupon = c("Coupon1",
+#'                  "Coupon2",
+#'                  "Coupon3"),
+#'                degree = "Degree",
+#'                result = c('Age','Sex'))
+#'
+#'
+#' # Run bootstrap_RDS with rds_data
+#' results = bootstrap_RDS(RESPONDENT_ID = rds_data$ID, SEED_ID = rds_data$S_ID,
+#' SEED = rds_data$SEED, RECRUITER_ID = rds_data$R_CP,
+#' data.cov = rds_data[,c('Age', 'Sex')], type = 'boot_chain_one', n.times = 100,
+#' return_data = T)
+#'
 #' @export
 bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
                          data.cov, type, n.times, return_data=F){

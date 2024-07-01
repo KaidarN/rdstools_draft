@@ -6,8 +6,27 @@
 #' @return Data frame; Containes mean, median, variance and associated 95\% CIs
 #'
 #' @examples
-#' out = descr.stats.est(data, x)
+#' data('RDStoydata')
 #'
+#' # Preprocess data with RDSdata function
+#' rds_data <- RDSdata(data = RDStoydata,unique_id = "ID",
+#' redeemed_coupon = "CouponR",
+#' issued_coupon = c("Coupon1",
+#'                  "Coupon2",
+#'                  "Coupon3"),
+#'                degree = "Degree",
+#'                result = c('Age','Sex'))
+#'
+#'
+#' # Run bootstrap_RDS with rds_data
+#' results = bootstrap_RDS(RESPONDENT_ID = rds_data$ID, SEED_ID = rds_data$S_ID,
+#' SEED = rds_data$SEED, RECRUITER_ID = rds_data$R_CP,
+#' data.cov = rds_data[,c('Age', 'Sex')], type = 'boot_chain_one', n.times = 100,
+#' return_data = T)
+#'
+#' # Calculate descriptive statistics using results from bootstrap_RDS
+#' out = descr.stats.est(results, as.numeric(results$Age))
+#' out
 #' @export
 
 descr.stats.est = function(data, x){
