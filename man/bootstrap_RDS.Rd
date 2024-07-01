@@ -2,7 +2,7 @@
 % Please edit documentation in R/bootstrap_functions.R
 \name{bootstrap_RDS}
 \alias{bootstrap_RDS}
-\title{Title Variance estimation with bootstrap chain and tree methods}
+\title{Variance estimation with bootstrap chain and tree methods}
 \usage{
 bootstrap_RDS(
   RESPONDENT_ID,
@@ -38,7 +38,7 @@ When return_data=F returns a data frame consistiting of the following elements:
 \item {boot_n}{character vector; A indicator variable for each bootstrap sample}
 }
 \description{
-Title Variance estimation with bootstrap chain and tree methods
+Variance estimation with bootstrap chain and tree methods
 }
 \examples{
 out = bootstrap_RDS(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID, data.cov, type, n.times, return_data=F)

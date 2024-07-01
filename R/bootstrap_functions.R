@@ -1,6 +1,6 @@
 
 
-#' Title Variance estimation with bootstrap chain and tree methods
+#' Variance estimation with bootstrap chain and tree methods
 #'
 #' @param RESPONDENT_ID character or numeric vector; A variable indicating respondent ID
 #' @param SEED_ID character or numeric vector; A variable indicating seed ID
