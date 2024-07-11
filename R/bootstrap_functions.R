@@ -11,8 +11,8 @@
 #'
 #' @return Returns a data frame consisting of the following elements:
 #' \describe{
-#' \item {respondent_id}{character vector; A variable indicating respondent ID}
-#' \item {boot_n}{character vector; A indicator variable for each bootstrap sample}
+#'  \item{respondent_id}{character vector; A variable indicating respondent ID}
+#'  \item{boot_n}{character vector; A indicator variable for each bootstrap sample}
 #'}
 #'
 #' @examples

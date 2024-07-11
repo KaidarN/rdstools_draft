@@ -22,8 +22,8 @@ RDSBoot(respondent_id, seed_id, seed, recruiter_id, type, n.times)
 \value{
 Returns a data frame consisting of the following elements:
 \describe{
-\item {respondent_id}{character vector; A variable indicating respondent ID}
-\item {boot_n}{character vector; A indicator variable for each bootstrap sample}
+ \item{respondent_id}{character vector; A variable indicating respondent ID}
+ \item{boot_n}{character vector; A indicator variable for each bootstrap sample}
 }
 }
 \description{
