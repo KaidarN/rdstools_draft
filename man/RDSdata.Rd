@@ -26,9 +26,11 @@ RDSdata(
 
 \item{degree}{Numeric vector;  The column name of the column in the data that represents the degree of the respondents}
 
+\item{zero_degree_method}{Character; This parameter is used to set the method for imputing zero values in the 'degree' variable. Three methods are available for selection: mean, median, and hotdeck. If this parameter is not set, the default imputation method is hotdeck}
+
 \item{NA_degree_method}{Character; This parameter is used to set the method for imputing missing values in the 'degree' variable. There are three methods to choose from: mean, median, and hotdeck. If this parameter is not set, the default method is hotdeck.}
 
-\item{result}{Character; This parameter is used to set the method for imputing zero values in the 'degree' variable. Three methods are available for selection: mean, median, and hotdeck. If this parameter is not set, the default imputation method is hotdeck}
+\item{result}{Vector; Column names of columns representing the interview outcome data about the respondents that should be included in the output data}
 }
 \value{
 \item{ID}{Character vector; Renamed unique_id variable}

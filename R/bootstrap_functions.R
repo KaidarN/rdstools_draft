@@ -2,16 +2,17 @@
 
 #' Variance estimation with bootstrap chain and tree methods
 #'
-#' @param RESPONDENT_ID character or numeric vector; A variable indicating respondent ID
-#' @param SEED_ID character or numeric vector; A variable indicating seed ID
-#' @param SEED character or numeric vector; a variable indicating whether a particular respondent is seed or not
-#' @param RECRUITER_ID character or numeric vector; A variable indicating recruiter ID
-#' @param data.cov vector, matrix or data frame; Variable(s) of interest that will be used in the analysis
-#' @param type character; One of the six types of bootstrap methods, please see the vignette for a more detailed information
-#' @param n.times scalar; How many bootstrap resamples should be taken
-#' @param return_data logical; By default return_data=F returns respondent ID and bootstrap iterations. If return_data TRUE, then the output will include variable(s) specified in data.cov
+#' @param respondent_id character or numeric vector; A variable indicating respondent ID
+#' @param seed-id character or numeric vector; A variable indicating seed ID
+#' @param seed character or numeric vector; a variable indicating whether a particular respondent is seed or not
+#' @param recruiter_id character or numeric vector; A variable indicating recruiter ID
+#' @param type character; One of the six types of bootstrap methods: (1) boot_chain_one, (2) boot_chain_two,
+#' (3) boot_tree_one, (4) boot_tree_two, (5) boot_bidirectional_one, (6) boot_bidirectional_two
+#' please see the vignette for a more detailed information
+#' @param n.times scalar; A number of bootstrap resamples
+
 #'
-#' @return When return_data=F returns a data frame consistiting of the following elements:
+#' @return When return_data=F returns a data frame consisting of the following elements:
 #' \item {RESPONDENT_ID}{character vector; A variable indicating respondent ID}
 #' \item {boot_n}{character vector; A indicator variable for each bootstrap sample}
 #'
@@ -29,18 +30,16 @@
 #'
 #'
 #' # Run bootstrap_RDS with rds_data
-#' results = bootstrap_RDS(RESPONDENT_ID = rds_data$ID, SEED_ID = rds_data$S_ID,
-#' SEED = rds_data$SEED, RECRUITER_ID = rds_data$R_CP,
-#' data.cov = rds_data[,c('Age', 'Sex')], type = 'boot_chain_one', n.times = 100,
-#' return_data = T)
+#' results = bootstrap_RDS(respondent_id = rds_data$ID, seed_id = rds_data$S_ID,
+#' seed = rds_data$SEED, recruiter_id = rds_data$R_CP,
+#' type = 'boot_chain_one', n.times = 100)
 #'
 #' @export
 
-bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
-                         data.cov, type, n.times, return_data=F){
+RDSBoot = function(respondent_id, seed_id, seed, recruiter_id,
+                   type, n.times){
 
-  data.cov = as.data.frame(data.cov)
-  data = as.data.frame(cbind(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID, data.cov)) # combine data
+  data = as.data.frame(cbind(respondent_id, seed_id, seed, recruiter_id)) # combine data
 
   results_bootstrap_RDS = vector(mode='list', n.times)  # list to store all of the bootstrap iterations
 
@@ -49,11 +48,11 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
     boot_chain1 = function(data) {
 
       empty.list = list() # initialize an empty list
-      df = data[which(data$SEED==1),] # only seeds are selected
-      seed_id = sample(df$RESPONDENT_ID, nrow(df), replace=T) # all seeds are selected
+      df = data[which(data$seed==1),] # only seeds are selected
+      seed_id = sample(df$respondent_id, nrow(df), replace=T) # all seeds are selected
 
       for (i in 1:length(seed_id)){
-        empty.list[[i]] = data[data$SEED_ID==seed_id[i],]
+        empty.list[[i]] = data[data$seed_id==seed_id[i],]
       }
 
       data.df = do.call(rbind, empty.list) # data frame from do.call
@@ -70,18 +69,18 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
     boot_chain2 = function(data) {
 
       bootstrap_list = list()
-      seeds_df = data[data$SEED == 1, ]
+      seeds_df = data[data$seed == 1, ]
 
       if (nrow(seeds_df) == 0) {
-        stop("There are no records where SEED equals 1.")
+        stop("There are no records where seed equals 1.")
       }
 
       data_df = data.frame()
       i = 1
 
       while (nrow(data_df) < nrow(data)) {
-        selected_seed = sample(seeds_df$RESPONDENT_ID, 1, replace=TRUE)
-        bootstrap_list[[i]] = data[data$SEED_ID == selected_seed, ]
+        selected_seed = sample(seeds_df$respondent_id, 1, replace=TRUE)
+        bootstrap_list[[i]] = data[data$seed_id == selected_seed, ]
         data_df = do.call(rbind, bootstrap_list)
         i = i + 1
       }
@@ -96,15 +95,15 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
   else if(type == 'boot_tree_one'){
     ######################################## function for tree boostrap 1
     tree.boot.one = function(data){
-      all_seeds = data[which(data$SEED == 1),] # subset seeds only
-      seed_ids <- sample(all_seeds$RESPONDENT_ID, size = nrow(all_seeds), replace = TRUE) # sample seeds only
+      all_seeds = data[which(data$seed == 1),] # subset seeds only
+      seed_ids <- sample(all_seeds$respondent_id, size = nrow(all_seeds), replace = TRUE) # sample seeds only
 
       results = list()
       ### for each seed lets find their recruits
       for (i in 1:length(seed_ids)){
-        seed_recruits = data[data$RECRUITER_ID %in% seed_ids[i],]
-        r.recruits <- sample(seed_recruits$RESPONDENT_ID, size = nrow(seed_recruits), replace = TRUE)
-        recruit_index_list <- match(r.recruits, seed_recruits$RESPONDENT_ID)
+        seed_recruits = data[data$recruiter_id %in% seed_ids[i],]
+        r.recruits <- sample(seed_recruits$respondent_id, size = nrow(seed_recruits), replace = TRUE)
+        recruit_index_list <- match(r.recruits, seed_recruits$respondent_id)
         results[[i]] <- seed_recruits[recruit_index_list, ]
       }
 
@@ -112,20 +111,20 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
 
 
       full_recruitment_data <- results # initialize with the first wave of recruits
-      current_wave_ids <- full_recruitment_data$RESPONDENT_ID # get unique respondent IDs from the first wave
+      current_wave_ids <- full_recruitment_data$respondent_id # get unique respondent IDs from the first wave
 
       # Continue the process until there are no new recruits
       while (length(current_wave_ids) > 0) {
-        recruits_df <- data[data$RECRUITER_ID %in% current_wave_ids, ] # Find recruits of the current wave
+        recruits_df <- data[data$recruiter_id %in% current_wave_ids, ] # Find recruits of the current wave
 
         if (nrow(recruits_df) > 0) { # Check if there are any new recruits
-          r.recruits <- sample(recruits_df$RESPONDENT_ID, size = nrow(recruits_df), replace = TRUE)
-          recruit_index_list <- match(r.recruits, recruits_df$RESPONDENT_ID)
+          r.recruits <- sample(recruits_df$respondent_id, size = nrow(recruits_df), replace = TRUE)
+          recruit_index_list <- match(r.recruits, recruits_df$respondent_id)
           new_recruits <- recruits_df[recruit_index_list, ]
 
           if (nrow(new_recruits) > 0) {
             full_recruitment_data <- rbind(full_recruitment_data, new_recruits) # Append new recruits to the full data
-            current_wave_ids <- new_recruits$RESPONDENT_ID # Update current_wave_ids with new recruits' IDs
+            current_wave_ids <- new_recruits$respondent_id # Update current_wave_ids with new recruits' IDs
           } else {
             current_wave_ids <- NULL # If no new recruits, break the loop
           }
@@ -136,7 +135,7 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
 
       seed_id = list()
       for (i in 1:length(seed_ids)){
-        seed_id[[i]] = data[data$RESPONDENT_ID %in% seed_ids[i],]
+        seed_id[[i]] = data[data$respondent_id %in% seed_ids[i],]
       }
 
       seed_id = do.call(rbind, seed_id)
@@ -157,15 +156,15 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
       boot.results <- data.frame()
 
       while (nrow(boot.results)<nrow(data)){
-        all_seeds = data[which(data$SEED == 1),] # subset seeds only
-        seed_ids <- sample(all_seeds$RESPONDENT_ID, size = 1, replace = TRUE) # sample seeds only
+        all_seeds = data[which(data$seed == 1),] # subset seeds only
+        seed_ids <- sample(all_seeds$respondent_id, size = 1, replace = TRUE) # sample seeds only
 
         results = list()
         ### for each seed lets find their recruits
         for (i in 1:length(seed_ids)){
-          seed_recruits = data[data$RECRUITER_ID %in% seed_ids[i],]
-          r.recruits <- sample(seed_recruits$RESPONDENT_ID, size = nrow(seed_recruits), replace = TRUE)
-          recruit_index_list <- match(r.recruits, seed_recruits$RESPONDENT_ID)
+          seed_recruits = data[data$recruiter_id %in% seed_ids[i],]
+          r.recruits <- sample(seed_recruits$respondent_id, size = nrow(seed_recruits), replace = TRUE)
+          recruit_index_list <- match(r.recruits, seed_recruits$respondent_id)
           results[[i]] <- seed_recruits[recruit_index_list, ]
         }
 
@@ -173,20 +172,20 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
 
 
         full_recruitment_data <- results # initialize with the first wave of recruits
-        current_wave_ids <- full_recruitment_data$RESPONDENT_ID # get unique respondent IDs from the first wave
+        current_wave_ids <- full_recruitment_data$respondent_id # get unique respondent IDs from the first wave
 
         # Continue the process until there are no new recruits
         while (length(current_wave_ids) > 0) {
-          recruits_df <- data[data$RECRUITER_ID %in% current_wave_ids, ] # Find recruits of the current wave
+          recruits_df <- data[data$recruiter_id %in% current_wave_ids, ] # Find recruits of the current wave
 
           if (nrow(recruits_df) > 0) { # Check if there are any new recruits
-            r.recruits <- sample(recruits_df$RESPONDENT_ID, size = nrow(recruits_df), replace = TRUE)
-            recruit_index_list <- match(r.recruits, recruits_df$RESPONDENT_ID)
+            r.recruits <- sample(recruits_df$respondent_id, size = nrow(recruits_df), replace = TRUE)
+            recruit_index_list <- match(r.recruits, recruits_df$respondent_id)
             new_recruits <- recruits_df[recruit_index_list, ]
 
             if (nrow(new_recruits) > 0) {
               full_recruitment_data <- rbind(full_recruitment_data, new_recruits) # Append new recruits to the full data
-              current_wave_ids <- new_recruits$RESPONDENT_ID # Update current_wave_ids with new recruits' IDs
+              current_wave_ids <- new_recruits$respondent_id # Update current_wave_ids with new recruits' IDs
             } else {
               current_wave_ids <- NULL # If no new recruits, break the loop
             }
@@ -194,9 +193,9 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
             current_wave_ids <- NULL # If no new recruits, break the loop
           }
         }
-        seed_ids = data[data$RESPONDENT_ID == seed_ids,]
+        seed_ids = data[data$respondent_id == seed_ids,]
         boot.results = rbind(seed_ids, full_recruitment_data)
-        boot.results = boot.results[complete.cases(boot.results$RESPONDENT_ID),]
+        boot.results = boot.results[complete.cases(boot.results$respondent_id),]
       }
       return(boot.results)
     }
@@ -208,7 +207,7 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
   else if (type == 'boot_bidirectional_one'){
     bootstrap_bidirectional_one = function(data) {
 
-      starting_ids = sample(data$RESPONDENT_ID, 10, replace = TRUE) # sample 10 IDs
+      starting_ids = sample(data$respondent_id, 10, replace = TRUE) # sample 10 IDs
       chains = vector("list", length(starting_ids))
       names(chains) = starting_ids
 
@@ -218,8 +217,8 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
 
         # Continue building the chain until no further connections can be added
         while (length(current_ids) > 0) {
-          forward_nodes = unlist(data[data$RECRUITER_ID %in% current_ids, "RESPONDENT_ID", drop = FALSE]) # forward nodes
-          backward_nodes = unlist(data[data$RESPONDENT_ID %in% current_ids, "RECRUITER_ID", drop = FALSE]) # backward nodes
+          forward_nodes = unlist(data[data$recruiter_id %in% current_ids, "respondent_id", drop = FALSE]) # forward nodes
+          backward_nodes = unlist(data[data$respondent_id %in% current_ids, "recruiter_id", drop = FALSE]) # backward nodes
           connected_nodes = c(forward_nodes, backward_nodes) # conencted nodes
 
           next_nodes = setdiff(connected_nodes, chain) # exclude already visited
@@ -233,13 +232,13 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
       }
       # now we need to transform chains into a dataframe, for this we create an empty data frame and the iterate over
       # each element in a list
-      chains_df <- data.frame(chain_id = integer(), RESPONDENT_ID = integer(), stringsAsFactors = FALSE) # empty data frame
+      chains_df <- data.frame(chain_id = integer(), respondent_id = integer(), stringsAsFactors = FALSE) # empty data frame
       for (i in seq_along(chains)) {
         single_chain_df <- data.frame(chain_id = rep(names(chains)[i],
-                                                     length(chains[[i]])), RESPONDENT_ID = chains[[i]], stringsAsFactors = FALSE)
+                                                     length(chains[[i]])), respondent_id = chains[[i]], stringsAsFactors = FALSE)
         chains_df <- rbind(chains_df, single_chain_df)
       }
-      results = merge(chains_df, data, by='RESPONDENT_ID')
+      results = merge(chains_df, data, by='respondent_id')
       return(results)
     }
     for (i in seq_len(n.times)){
@@ -250,11 +249,11 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
   else if (type == 'boot_bidirectional_two'){bootstrap_bidirectional_two = function(data) {
 
     # Initialize the data frame outside the while loop
-    chains_df <- data.frame(chain_id = integer(), RESPONDENT_ID = integer(), stringsAsFactors = FALSE)
+    chains_df <- data.frame(chain_id = integer(), respondent_id = integer(), stringsAsFactors = FALSE)
 
     # Loop until the number of rows in chains_df is greater than or equal to the number of rows in data
     while (nrow(chains_df) < nrow(data)) {
-      starting_ids = sample(data$RESPONDENT_ID, 1, replace = TRUE) # sample IDs
+      starting_ids = sample(data$respondent_id, 1, replace = TRUE) # sample IDs
       chains = vector("list", length(starting_ids))
       names(chains) = starting_ids
 
@@ -264,8 +263,8 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
 
         # Continue building the chain until no further connections can be added
         while (length(current_ids) > 0) {
-          forward_nodes = unlist(data[data$RECRUITER_ID %in% current_ids, "RESPONDENT_ID", drop = FALSE])
-          backward_nodes = unlist(data[data$RESPONDENT_ID %in% current_ids, "RECRUITER_ID", drop = FALSE])
+          forward_nodes = unlist(data[data$recruiter_id %in% current_ids, "respondent_id", drop = FALSE])
+          backward_nodes = unlist(data[data$respondent_id %in% current_ids, "recruiter_id", drop = FALSE])
           connected_nodes = c(forward_nodes, backward_nodes)
 
           next_nodes = setdiff(connected_nodes, chain)
@@ -281,12 +280,12 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
       # Transform chains into a dataframe
       for (i in seq_along(chains)) {
         single_chain_df <- data.frame(chain_id = rep(names(chains)[i], length(chains[[i]])),
-                                      RESPONDENT_ID = chains[[i]],
+                                      respondent_id = chains[[i]],
                                       stringsAsFactors = FALSE)
         chains_df <- rbind(chains_df, single_chain_df)
       }
     }
-    results = merge(chains_df, data, by='RESPONDENT_ID')
+    results = merge(chains_df, data, by='respondent_id')
     return(results)
   }
   for (i in seq_len(n.times)){
@@ -300,16 +299,8 @@ bootstrap_RDS = function(RESPONDENT_ID, SEED_ID, SEED, RECRUITER_ID,
   results_bootstrap_RDS = lapply(seq(results_bootstrap_RDS),
                                  function(x) "[[<-"(results_bootstrap_RDS[[x]],
                                                     paste0("boot_n"), value = x))
-
-
-  if (!return_data) {
-
-    results_bootstrap_RDS = lapply(results_bootstrap_RDS,  # returns ID variables
-                                   function(df) {data.frame(RESPONDENT_ID = df$RESPONDENT_ID, boot_n = df$boot_n)})
-    results_bootstrap_RDS = do.call(rbind, results_bootstrap_RDS)
-  }  else {
-    results_bootstrap_RDS = do.call(rbind, results_bootstrap_RDS)
-  }
-
+  results_bootstrap_RDS = lapply(results_bootstrap_RDS,  # returns ID variables
+                                 function(df) {data.frame(respondent_id = df$respondent_id, boot_n = df$boot_n)})
+  results_bootstrap_RDS = do.call(rbind, results_bootstrap_RDS)
   return(results_bootstrap_RDS)
 }

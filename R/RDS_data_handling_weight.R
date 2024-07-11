@@ -8,9 +8,9 @@
 #' @param redeemed_coupon Character vector; The column name of the column in the data that represents coupon numbers of coupons redeemed by respondents when participating in the survey
 #' @param issued_coupons Character vector; The column name of the column in the data that represents the coupon numbers of coupons issued to respondents
 #' @param degree Numeric vector;  The column name of the column in the data that represents the degree of the respondents
-#' @param zero_degree_method
+#' @param zero_degree_method Character; This parameter is used to set the method for imputing zero values in the 'degree' variable. Three methods are available for selection: mean, median, and hotdeck. If this parameter is not set, the default imputation method is hotdeck
 #' @param NA_degree_method Character; This parameter is used to set the method for imputing missing values in the 'degree' variable. There are three methods to choose from: mean, median, and hotdeck. If this parameter is not set, the default method is hotdeck.
-#' @param result Character; This parameter is used to set the method for imputing zero values in the 'degree' variable. Three methods are available for selection: mean, median, and hotdeck. If this parameter is not set, the default imputation method is hotdeck
+#' @param result Vector; Column names of columns representing the interview outcome data about the respondents that should be included in the output data
 #'
 #' @return
 #' \item{ID}{Character vector; Renamed unique_id variable}
