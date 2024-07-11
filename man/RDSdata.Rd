@@ -10,8 +10,8 @@ RDSData(
   redeemed_coupon,
   issued_coupons,
   degree,
-  zero_degree = "hotdeck",
-  NA_degree = "hotdeck"
+  zero_degree,
+  NA_degree
 )
 }
 \arguments{
@@ -51,11 +51,11 @@ Data processing in an RDS study
 
 data('RDStoydata')
 
-rds_data <- RDSdata(data = RDStoydata,unique_id = "ID",
-redeemed_coupon = "CouponR",
-issued_coupon = c("Coupon1",
-                 "Coupon2",
-                 "Coupon3"),
-               degree = "Degree",
-               result = c('Age','Sex'))
+rds_data <- RDSData(data = RDStoydata,
+                    unique_id = "ID",
+                    redeemed_coupon = "CouponR",
+                    issued_coupon = c("Coupon1",
+                                      "Coupon2",
+                                      "Coupon3"),
+                    degree = "Degree")
 }

@@ -29,25 +29,25 @@
 #'
 #' data('RDStoydata')
 #'
-#' rds_data <- RDSdata(data = RDStoydata,unique_id = "ID",
-#' redeemed_coupon = "CouponR",
-#' issued_coupon = c("Coupon1",
-#'                  "Coupon2",
-#'                  "Coupon3"),
-#'                degree = "Degree",
-#'                result = c('Age','Sex'))
+#' rds_data <- RDSData(data = RDStoydata,
+#'                     unique_id = "ID",
+#'                     redeemed_coupon = "CouponR",
+#'                     issued_coupon = c("Coupon1",
+#'                                       "Coupon2",
+#'                                       "Coupon3"),
+#'                     degree = "Degree")
 #' @export
 
 
-RDSData <- function( #RDSData
-  data,
-  unique_id,
-  redeemed_coupon,
-  issued_coupons,
-  degree,
-  zero_degree = 'hotdeck',
-  NA_degree = 'hotdeck'
-) {
+RDSData <- function(
+    data,
+    unique_id,
+    redeemed_coupon,
+    issued_coupons,
+    degree,
+    zero_degree,
+    NA_degree
+    ) {
   Warning_Function_ID_missing_data<- function(unique_id,data)if (any(is.na(data[,1]))) {
     stop("Function operation has been interrupted.
          Please make sure there are no missing values in ",
