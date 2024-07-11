@@ -10,9 +10,8 @@
 #' @param degree Numeric vector;  The column name of the column in the data that represents the degree of the respondents
 #' @param zero_degree_method Character; This parameter is used to set the method for imputing zero values in the 'degree' variable. Three methods are available for selection: mean, median, and hotdeck. If this parameter is not set, the default imputation method is hotdeck
 #' @param NA_degree_method Character; This parameter is used to set the method for imputing missing values in the 'degree' variable. There are three methods to choose from: mean, median, and hotdeck. If this parameter is not set, the default method is hotdeck.
-#' @param result Vector; Column names of columns representing the interview outcome data about the respondents that should be included in the output data
 #'
-#' @return
+#' @return A data frame with all original variables except ID and new RDS related information
 #' \item{ID}{Character vector; Renamed unique_id variable}
 #' \item{R_CP}{Character vector; Renamed redeemed coupon variable}
 #' \item{T_CP1 - T_CPn}{Character vector(s); Renamed issued coupon variable}
@@ -39,15 +38,15 @@
 #'                result = c('Age','Sex'))
 #' @export
 
-RDSdata <- function(
-    data,
-    unique_id,
-    redeemed_coupon,
-    issued_coupons,
-    degree,
-    zero_degree_method = 'hotdeck',
-    NA_degree_method = 'hotdeck',
-    result
+
+RDSData <- function( #RDSData
+  data,
+  unique_id,
+  redeemed_coupon,
+  issued_coupons,
+  degree,
+  zero_degree = 'hotdeck',
+  NA_degree = 'hotdeck'
 ) {
   Warning_Function_ID_missing_data<- function(unique_id,data)if (any(is.na(data[,1]))) {
     stop("Function operation has been interrupted.
@@ -61,14 +60,16 @@ RDSdata <- function(
     df[[unique_id]] <- df[[redeemed_coupon]]
   }
 
+
   # select relevant columns
-  df<-subset(data, select = c(unique_id, redeemed_coupon, issued_coupons,degree,result))
+  df<-RDStoydata[,c(unique_id, redeemed_coupon,
+                    issued_coupons, degree)]
   df <- data.frame(lapply(df, as.character))
   df[df == ''] <- NA
 
   # rename columns
   issued_coupons <- paste0("T_CP", 1:length(issued_coupons))
-  names(df) <- c("ID", "R_CP", issued_coupons,"DEGREE",result)
+  names(df) <- c("ID", "R_CP", issued_coupons,"DEGREE")
 
   get_recruiter_ID <- function(df) {
     id <- df$ID
@@ -140,29 +141,29 @@ RDSdata <- function(
   NA_row<-df[is.na(df$DEGREE),]
   #imputation for NA
   if(nrow(NA_row)!=0){
-    if(NA_degree_method=='hotdeck'){
+    if(NA_degree == 'hotdeck'){
       for (i in 1:nrow(NA_row)) {
         # Randomly select a number from the row providing the imputed data
         NA_row$DEGREE[i]<- sample(selected_rows$DEGREE, 1)
       }
-    }else if(NA_degree_method=='mean'){
+    }else if(NA_degree == 'mean'){
       NA_row$DEGREE<-mean(selected_rows$DEGREE)
-    }else if(NA_degree_method=='median'){
+    }else if(NA_degree == 'median'){
       NA_row$DEGREE<-median(selected_rows$DEGREE)
     }else{
-      stop("Invalid NA_degree_method value.")
+      stop("Invalid NA_degree value.")
     }
   }
   #imputation for 0
   if(nrow(zero_row)!=0){
-    if(zero_degree_method=='hotdeck'){
+    if(zero_degree == 'hotdeck'){
       for (i in 1:nrow(zero_row)) {
         # Randomly select a number from the row providing the imputed data
         zero_row$DEGREE[i]<- sample(selected_rows$DEGREE, 1)
       }
-    }else if(zero_degree_method=='mean'){
+    }else if(zero_degree =='mean'){
       zero_row$DEGREE<-mean(selected_rows$DEGREE)
-    }else if(zero_degree_method=='median'){
+    }else if(zero_degree =='median'){
       zero_row$DEGREE<-median(selected_rows$DEGREE)
     }else{
       stop("Invalid zero_degree_method value.")
@@ -182,8 +183,9 @@ RDSdata <- function(
   #calculate the WEIGHT
   df$WEIGHT<-1/df$DEGREE
   #For storage the data trans back to character
-  df$DEGREE<-as.character(df$DEGREE)
-  df$WEIGHT<-as.character(df$WEIGHT)
+  df$DEGREE <- as.character(df$DEGREE)
+  df$WEIGHT <- as.character(df$WEIGHT)
+  df <- cbind(df, data[,-c(match(unique_id,names(RDStoydata)))])
   return(df)
 }
 
