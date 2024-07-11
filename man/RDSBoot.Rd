@@ -9,22 +9,22 @@ RDSBoot(respondent_id, seed_id, seed, recruiter_id, type, n.times)
 \arguments{
 \item{respondent_id}{character or numeric vector; A variable indicating respondent ID}
 
+\item{seed_id}{character or numeric vector; A variable indicating seed ID}
+
 \item{seed}{character or numeric vector; a variable indicating whether a particular respondent is seed or not}
 
 \item{recruiter_id}{character or numeric vector; A variable indicating recruiter ID}
 
-\item{type}{character; One of the six types of bootstrap methods: (1) boot_chain_one, (2) boot_chain_two,
-(3) boot_tree_one, (4) boot_tree_two, (5) boot_bidirectional_one, (6) boot_bidirectional_two
-please see the vignette for a more detailed information}
+\item{type}{character; One of the six types of bootstrap methods: (1) boot_chain_one, (2) boot_chain_two, (3) boot_tree_one, (4) boot_tree_two, (5) boot_bidirectional_one, (6) boot_bidirectional_two. Please see the vignette for a more detailed information.}
 
 \item{n.times}{scalar; A number of bootstrap resamples}
-
-\item{seed-id}{character or numeric vector; A variable indicating seed ID}
 }
 \value{
-When return_data=F returns a data frame consisting of the following elements:
-\item {RESPONDENT_ID}{character vector; A variable indicating respondent ID}
+Returns a data frame consisting of the following elements:
+\describe{
+\item {respondent_id}{character vector; A variable indicating respondent ID}
 \item {boot_n}{character vector; A indicator variable for each bootstrap sample}
+}
 }
 \description{
 Variance estimation with bootstrap chain and tree methods
@@ -33,9 +33,9 @@ Variance estimation with bootstrap chain and tree methods
 data('RDStoydata')
 
 # Preprocess data with RDSdata function
-rds_data <- RDSdata(data = RDStoydata,unique_id = "ID",
-redeemed_coupon = "CouponR",
-issued_coupon = c("Coupon1",
+rds_data <- RDSdata(data = RDStoydata, unique_id = "ID",
+  redeemed_coupon = "CouponR",
+  issued_coupon = c("Coupon1",
                  "Coupon2",
                  "Coupon3"),
                degree = "Degree",
@@ -43,7 +43,7 @@ issued_coupon = c("Coupon1",
 
 
 # Run bootstrap_RDS with rds_data
-results = bootstrap_RDS(respondent_id = rds_data$ID, seed_id = rds_data$S_ID,
+results <- bootstrap_RDS(respondent_id = rds_data$ID, seed_id = rds_data$S_ID,
 seed = rds_data$SEED, recruiter_id = rds_data$R_CP,
 type = 'boot_chain_one', n.times = 100)
 
